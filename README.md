@@ -4,6 +4,9 @@ setup - install python
 
 setup - opencv and venv-  https://youtu.be/fclTFQQvQFQ?si=rOlyAJ7PpG9D1Ifu
 
+    pip install opencv-python pillow
+    
+
 image_processing_tool/
 │
 ├── main.py                   # Main entry point, handles the program flow
