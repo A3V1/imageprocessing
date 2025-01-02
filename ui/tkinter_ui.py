@@ -9,6 +9,7 @@ from utils.file_operations import load_image, save_image
 from utils.undo_redo import UndoRedoManager
 from image_processing.basic_operations import rotate_image, resize_image, crop_image
 from image_processing.filters import apply_blur
+from image_processing.color_adjustments import brightness, contrast, saturation
 # Add imports for other operations as needed
 
 class TkinterUI:
@@ -38,6 +39,14 @@ class TkinterUI:
         tk.Button(self.control_frame, text="Rotate", command=self.rotate_image).grid(row=1, column=1)
         tk.Button(self.control_frame, text="Resize", command=self.resize_image).grid(row=1, column=2)
         tk.Button(self.control_frame, text="Crop", command=self.crop_image).grid(row=1, column=3)
+        
+        # Add new color adjustment buttons
+        tk.Button(self.control_frame, text="Brightness +", command=lambda: self.adjust_brightness(1.2)).grid(row=2, column=1)
+        tk.Button(self.control_frame, text="Brightness -", command=lambda: self.adjust_brightness(0.8)).grid(row=2, column=2)
+        tk.Button(self.control_frame, text="Contrast +", command=lambda: self.adjust_contrast(1.2)).grid(row=2, column=3)
+        tk.Button(self.control_frame, text="Contrast -", command=lambda: self.adjust_contrast(0.8)).grid(row=2, column=4)
+        tk.Button(self.control_frame, text="Saturation +", command=lambda: self.adjust_saturation(1.2)).grid(row=3, column=0)
+        tk.Button(self.control_frame, text="Saturation -", command=lambda: self.adjust_saturation(0.8)).grid(row=3, column=1)
         
         # Image display label
         self.image_label = tk.Label(self.image_frame)
@@ -100,6 +109,24 @@ class TkinterUI:
         next_state = self.undo_manager.redo()
         if next_state:
             self.image = next_state
+            self.display_image()
+        
+    def adjust_brightness(self, factor):
+        if self.image:
+            self.image = brightness(self.image, factor)
+            self.undo_manager.add_state(self.image.copy())
+            self.display_image()
+
+    def adjust_contrast(self, factor):
+        if self.image:
+            self.image = contrast(self.image, factor)
+            self.undo_manager.add_state(self.image.copy())
+            self.display_image()
+
+    def adjust_saturation(self, factor):
+        if self.image:
+            self.image = saturation(self.image, factor)
+            self.undo_manager.add_state(self.image.copy())
             self.display_image()
         
     def run(self):
