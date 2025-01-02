@@ -1,6 +1,7 @@
 import os
-os.environ['TCL_LIBRARY'] = r'C:\Users\Asus\AppData\Local\Programs\Python\Python313\tcl\tcl8.6'
-os.environ['TK_LIBRARY'] = r'C:\Users\Asus\AppData\Local\Programs\Python\Python313\tcl\tk8.6'
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
