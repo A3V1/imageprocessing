@@ -7,7 +7,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 from utils.file_operations import load_image, save_image
 from utils.undo_redo import UndoRedoManager
-from image_processing.basic_operations import rotate_image
+from image_processing.basic_operations import rotate_image, resize_image, crop_image
 from image_processing.filters import apply_blur
 # Add imports for other operations as needed
 
@@ -32,10 +32,12 @@ class TkinterUI:
         tk.Button(self.control_frame, text="Open Image", command=self.open_image).grid(row=0, column=0)
         tk.Button(self.control_frame, text="Save Image", command=self.save_image).grid(row=0, column=1)
         tk.Button(self.control_frame, text="Reset Image", command=self.reset_image).grid(row=0, column=2)
-        tk.Button(self.control_frame, text="Undo", command=self.undo).grid(row=0, column=3)
-        tk.Button(self.control_frame, text="Redo", command=self.redo).grid(row=0, column=4)
-        tk.Button(self.control_frame, text="Blur", command=self.apply_blur).grid(row=1, column=0)
+        tk.Button(self.control_frame, text="Undo", command=self.undo).grid(row=3, column=3)
+        tk.Button(self.control_frame, text="Redo", command=self.redo).grid(row=3, column=4)
+        tk.Button(self.control_frame, text="Blur", command=self.apply_blur).grid(row=2, column=0)
         tk.Button(self.control_frame, text="Rotate", command=self.rotate_image).grid(row=1, column=1)
+        tk.Button(self.control_frame, text="Resize", command=self.resize_image).grid(row=1, column=2)
+        tk.Button(self.control_frame, text="Crop", command=self.crop_image).grid(row=1, column=3)
         
         # Image display label
         self.image_label = tk.Label(self.image_frame)
@@ -75,6 +77,16 @@ class TkinterUI:
 
     def rotate_image(self):
         self.image = rotate_image(self.image, 90)  # Rotate 90 degrees
+        self.undo_manager.add_state(self.image.copy())
+        self.display_image()
+        
+    def resize_image(self):
+        self.image=resize_image(self.image,(8000,8000))
+        self.undo_manager.add_state(self.image.copy())
+        self.display_image()
+    
+    def crop_image(self):
+        self.image=crop_image(self.image,(15,20,300,350))
         self.undo_manager.add_state(self.image.copy())
         self.display_image()
         
