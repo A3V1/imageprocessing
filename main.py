@@ -1,4 +1,3 @@
-
 from ui.tkinter_ui import TkinterUI  
 
 def main():
