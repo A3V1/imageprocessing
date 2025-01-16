@@ -11,6 +11,8 @@ from image_processing.basic_operations import rotate_image, resize_image, crop_i
 from image_processing.filters import apply_blur
 from image_processing.color_adjustments import brightness, contrast, saturation
 from image_processing.compression import compress_image, compress_image_size
+from image_processing.histogram_equalization import histogram_equalization  # Import histogram equalization
+from image_processing.edge_detection import find_edges  # Import edge detection
 from utils.metadata import get_image_metadata  # Import the metadata function
 
 class TkinterUI:
@@ -44,31 +46,35 @@ class TkinterUI:
         tk.Button(self.control_frame, text="Resize", command=self.resize_image).grid(row=1, column=2)
         tk.Button(self.control_frame, text="Crop", command=self.start_crop).grid(row=1, column=3)
         
+        # Add buttons for histogram equalization and edge detection
+        tk.Button(self.control_frame, text="Histogram Equalization", command=self.apply_histogram_equalization).grid(row=2, column=1)
+        tk.Button(self.control_frame, text="Edge Detection", command=self.apply_edge_detection).grid(row=2, column=2)
+        
         # Color adjustment buttons
-        tk.Button(self.control_frame, text="Brightness +", command=lambda: self.adjust_brightness(1.2)).grid(row=2, column=1)
-        tk.Button(self.control_frame, text="Brightness -", command=lambda: self.adjust_brightness(0.8)).grid(row=2, column=2)
-        tk.Button(self.control_frame, text="Contrast +", command=lambda: self.adjust_contrast(1.2)).grid(row=2, column=3)
-        tk.Button(self.control_frame, text="Contrast -", command=lambda: self.adjust_contrast(0.8)).grid(row=2, column=4)
-        tk.Button(self.control_frame, text="Saturation +", command=lambda: self.adjust_saturation(1.2)).grid(row=3, column=0)
-        tk.Button(self.control_frame, text="Saturation -", command=lambda: self.adjust_saturation(0.8)).grid(row=3, column=1)
+        tk.Button(self.control_frame, text="Brightness +", command=lambda: self.adjust_brightness(1.2)).grid(row=3, column=0)
+        tk.Button(self.control_frame, text="Brightness -", command=lambda: self.adjust_brightness(0.8)).grid(row=3, column=1)
+        tk.Button(self.control_frame, text="Contrast +", command=lambda: self.adjust_contrast(1.2)).grid(row=3, column=2)
+        tk.Button(self.control_frame, text="Contrast -", command=lambda: self.adjust_contrast(0.8)).grid(row=3, column=3)
+        tk.Button(self.control_frame, text="Saturation +", command=lambda: self.adjust_saturation(1.2)).grid(row=4, column=0)
+        tk.Button(self.control_frame, text="Saturation -", command=lambda: self.adjust_saturation(0.8)).grid(row=4, column=1)
         
         # Compression buttons and controls
-        tk.Label(self.control_frame, text="Quality:").grid(row=4, column=0)
+        tk.Label(self.control_frame, text="Quality:").grid(row=5, column=0)
         self.quality_var = tk.Scale(self.control_frame, from_=1, to=100, orient='horizontal')
         self.quality_var.set(85)
-        self.quality_var.grid(row=4, column=1, columnspan=2)
+        self.quality_var.grid(row=5, column=1, columnspan=2)
         
-        tk.Label(self.control_frame, text="Size (KB):").grid(row=4, column=3)
+        tk.Label(self.control_frame, text="Size (KB):").grid(row=5, column=3)
         self.size_var = tk.Entry(self.control_frame, width=10)
         self.size_var.insert(0, "500")
-        self.size_var.grid(row=4, column=4)
+        self.size_var.grid(row=5, column=4)
         
-        tk.Button(self.control_frame, text="Compress Quality", command=self.compress_quality).grid(row=5, column=1)
-        tk.Button(self.control_frame, text="Compress Size", command=self.compress_size).grid(row=5, column=2)
+        tk.Button(self.control_frame, text="Compress Quality", command=self.compress_quality).grid(row=6, column=1)
+        tk.Button(self.control_frame, text="Compress Size", command=self.compress_size).grid(row=6, column=2)
         
         # Undo/Redo buttons
-        tk.Button(self.control_frame, text="Undo", command=self.undo).grid(row=3, column=3)
-        tk.Button(self.control_frame, text="Redo", command=self.redo).grid(row=3, column=4)
+        tk.Button(self.control_frame, text="Undo", command=self.undo).grid(row=4, column=3)
+        tk.Button(self.control_frame, text="Redo", command=self.redo).grid(row=4, column=4)
         
         # Image display label
         self.image_label = tk.Label(self.image_frame)
@@ -242,6 +248,18 @@ class TkinterUI:
                 text_widget.insert(tk.END, f"{key}: {value}\n")
             
             text_widget.config(state='disabled')  # Make read-only
+
+    def apply_histogram_equalization(self):
+        if self.image:
+            self.image = histogram_equalization(self.image)
+            self.undo_manager.add_state(self.image.copy())
+            self.display_image()
+
+    def apply_edge_detection(self):
+        if self.image:
+            self.image = find_edges(self.image)
+            self.undo_manager.add_state(self.image.copy())
+            self.display_image()
 
     def run(self):
         self.root.mainloop()
